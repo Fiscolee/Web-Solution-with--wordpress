@@ -15,8 +15,6 @@ Generally, web, or mobile solutions are implemented based on what is called the 
 
 Three-tier Architecture is a client-server software architecture pattern that comprise of 3 separate layers.
 
-image
-
 Presentation Layer (PL): This is the user interface such as the client server or browser on your laptop.
 Business Layer (BL): This is the backend program that implements business logic. Application or Webserver
 Data Access or Management Layer (DAL): This is the layer for computer data storage and data access. Database Server or File System Server such as FTP server, or NFS Server In this project, you will have the hands-on experience that showcases Three-tier Architecture while also ensuring that the disks used to store files on the Linux servers are adequately partitioned and managed through programs such as gdisk and LVM respectively.
@@ -24,7 +22,6 @@ Your 3-Tier Setup
 A Laptop or PC to serve as a client
 An EC2 Linux Server as a web server (This is where you will install WordPress)
 An EC2 Linux server as a database (DB) server Use RedHat OS for this project and set the security group to all traffic (not recommend for advanced or real projects)
-image
 
 Step 1 — Prepare a Web Server
 Launch an EC2 instance that will serve as "Web Server". Create 3 volumes in the same AZ as your Web Server EC2, each of 10 GiB.
@@ -35,7 +32,6 @@ Open up the Linux terminal to begin configuration
 
 Use lsblk command to inspect what block devices are attached to the server. Notice names of your newly created devices. All devices in Linux reside in /dev/ directory. Inspect it with ls /dev/ and make sure you see all 3 newly created block devices there – their names will likely be xvdf, xvdh, xvdg.
 lsblk 
-image
 
 Use (df -h) command to see all mounts and free space on your server
 
@@ -43,10 +39,6 @@ Use gdisk utility to create a single partition on each of the 3 disks
 
 sudo gdisk /dev/xvdf
 you will see this:
-
-image
-
-image
 
 GPT fdisk (gdisk) version 1.0.3
 
@@ -87,7 +79,6 @@ sudo gdisk /dev/xvdg
 sudo gdisk /dev/xvdh
 Use lsblk utility to view the newly configured partition on each of the 3 disks.
 
-image
 
 Install lvm2 package using sudo yum install lvm2. Run sudo lvmdiskscan command to check for available partitions.
 sudo yum install lvm2 -y
@@ -96,13 +87,11 @@ Use pvcreate utility to mark each of 3 disks as physical volumes (PVs) to be use
 sudo pvcreate /dev/xvdf1 /dev/xvdg1 /dev/xvdh1
 Verify that your Physical volume has been created successfully by running sudo pvs
 sudo pvs
-image
 
 Use vgcreate utility to add all 3 PVs to a volume group (VG). Name the VG webdata-vg
 sudo vgcreate vg-webdata /dev/xvdh1 /dev/xvdg1 /dev/xvdf1
 Verify that your VG has been created successfully by running
 sudo vgs
-image
 
 Use lvcreate utility to create 2 logical volumes. app-lv (Use half of the PV size), and logs-lv Use the remaining space of the PV size. NOTE: app-lv will be used to store data for the Website while, logs-lv will be used to store data for logs.
 sudo lvcreate -n app-lv -L 14G vg-webdata
@@ -138,7 +127,7 @@ image
 
 sudo vi /etc/fstab
 Step 1 - Update /etc/fstab in this format using your own UUID and rememeber to remove the leading and ending quotes.
-image
+
 
 Test the configuration and reload the daemon
 sudo mount -a
